@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adapala Yavanika - Frontend Developer Portfolio</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+        }
+        
+        .section-padding {
+            padding: 4rem 0;
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .skill-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .skill-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        
+        /* Profile image styles */
+        .profile-image {
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .profile-image {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .section-padding {
+                padding: 2rem 0;
+            }
+            
+            .profile-image {
+                width: 48vw;
+                height: 48vw;
+                max-width: 300px;
+                max-height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-image {
+                width: 60vw;
+                height: 60vw;
+                max-width: 250px;
+                max-height: 250px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [activeSection, setActiveSection] = useState('home');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    const sections = ['home', 'about', 'education', 'internship', 'skills', 'projects', 'certifications', 'contact'];
+                    const scrollPosition = window.scrollY + 100;
+
+                    for (const section of sections) {
+                        const element = document.getElementById(section);
+                        if (element) {
+                            const offsetTop = element.offsetTop;
+                            const offsetBottom = offsetTop + element.offsetHeight;
+
+                            if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+                                setActiveSection(section);
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const scrollToSection = (sectionId) => {
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                setIsMenuOpen(false);
+            };
+
+            const Navbar = () => (
+                <nav className="fixed top-0 w-full bg-white shadow-md z-50">
+                    <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+                        <div className="text-xl font-bold text-blue-600">AY</div>
+                        
+                        {/* Desktop Navigation */}
+                        <div className="hidden md:flex space-x-8">
+                            {['home', 'about', 'education', 'internship', 'skills', 'projects', 'certifications', 'contact'].map((section) => (
+                                <button
+                                    key={section}
+                                    onClick={() => scrollToSection(section)}
+                                    className={`nav-link capitalize ${activeSection === section ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-blue-500'}`}
+                                >
+                                    {section}
+                                </button>
+                            ))}
+                        </div>
+                        
+                        {/* Mobile Menu Button */}
+                        <button 
+                            className="md:hidden text-gray-600 focus:outline-none"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                            <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl`}></i>
+                        </button>
+                    </div>
+                    
+                    {/* Mobile Navigation */}
+                    {isMenuOpen && (
+                        <div className="md:hidden bg-white py-2 px-4 shadow-lg">
+                            <div className="flex flex-col space-y-3">
+                                {['home', 'about', 'education', 'internship', 'skills', 'projects', 'certifications', 'contact'].map((section) => (
+                                    <button
+                                        key={section}
+                                        onClick={() => scrollToSection(section)}
+                                        className={`text-left capitalize ${activeSection === section ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-blue-500'}`}
+                                    >
+                                        {section}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </nav>
+            );
+
+            const HomeSection = () => (
+                <section id="home" className="gradient-bg min-h-screen flex items-center section-padding">
+                    <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
+                        <div className="md:w-1/2 mb-10 md:mb-0">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-4">Adapala Yavanika</h1>
+                            <h2 className="text-2xl md:text-3xl text-blue-600 font-semibold mb-6">Frontend Developer</h2>
+                            <p className="text-lg text-gray-700 mb-8">Passionate about creating beautiful, responsive, and user-friendly web experiences.</p>
+                            <button 
+                                onClick={() => scrollToSection('contact')}
+                                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
+                            >
+                                Get In Touch
+                            </button>
+                        </div>
+                        <div className="md:w-1/2 flex justify-center">
+                            <img src="images/photo2.png"
+                                alt="Adapala Yavanika - Profile Photo"
+                                className="w-64 h-64 rounded-full object-cover profile-image"
+                            />
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const AboutSection = () => (
+                <section id="about" className="section-padding bg-gray-50">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">About Me</h2>
+                        <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                            <p className="text-lg text-gray-700 leading-relaxed">
+                                Information Technology graduate with strong skills in web development and programming. Proficient in HTML, CSS, JavaScript, and React. Seeking an entry-level role to apply technical skills, problem-solving abilities, and contribute to innovative projects while growing professionally.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const EducationSection = () => (
+                <section id="education" className="section-padding">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Education</h2>
+                        <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md card-hover">
+                            <div className="flex items-start">
+                                <div className="bg-blue-100 p-4 rounded-full mr-6">
+                                    <i className="fas fa-graduation-cap text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-semibold mb-2">B.Tech in Information Technology</h3>
+                                    <p className="text-gray-600 mb-2">R.V.R. & J.C. College of Engineering</p>
+                                    <p className="text-gray-600 mb-2">2024</p>
+                                    <p className="text-gray-700">CGPA: 6.93</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const InternshipSection = () => (
+                <section id="internship" className="section-padding bg-gray-50">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Internship</h2>
+                        <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md card-hover">
+                            <div className="flex items-start">
+                                <div className="bg-blue-100 p-4 rounded-full mr-6">
+                                    <i className="fas fa-briefcase text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-semibold mb-2">Full Stack Web Development Internship</h3>
+                                    <p className="text-gray-600 mb-2">Slash Mark</p>
+                                    <p className="text-gray-600 mb-2">Jan 2024 – Apr 2024</p>
+                                    <p className="text-gray-700">Collaborated with AICTE. Developed a portfolio website.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const SkillsSection = () => (
+                <section id="skills" className="section-padding">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Skills</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-4xl mx-auto">
+                            {[
+                                { name: 'HTML', icon: 'fab fa-html5', color: 'text-orange-500' },
+                                { name: 'CSS', icon: 'fab fa-css3-alt', color: 'text-blue-500' },
+                                { name: 'JavaScript', icon: 'fab fa-js-square', color: 'text-yellow-500' },
+                                { name: 'React', icon: 'fab fa-react', color: 'text-cyan-500' },
+                                { name: 'Git/GitHub', icon: 'fab fa-git-alt', color: 'text-red-500' },
+                                { name: 'VS Code', icon: 'fas fa-code', color: 'text-blue-600' }
+                            ].map((skill, index) => (
+                                <div key={index} className="bg-white p-6 rounded-lg shadow-md text-center card-hover skill-icon">
+                                    <i className={`${skill.icon} ${skill.color} text-4xl mb-3`}></i>
+                                    <h3 className="font-medium">{skill.name}</h3>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const ProjectsSection = () => (
+                <section id="projects" className="section-padding bg-gray-50">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Projects</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                            <div className="bg-white p-6 rounded-lg shadow-md card-hover">
+                                <div className="bg-blue-100 h-48 rounded-lg mb-6 flex items-center justify-center">
+                                    <i className="fas fa-virus text-blue-600 text-6xl"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-3">Explainable COVID-19 Diagnosis System</h3>
+                                <p className="text-gray-700">Deep learning-based X-ray analysis with classification + segmentation.</p>
+                            </div>
+                            <div className="bg-white p-6 rounded-lg shadow-md card-hover">
+                                <div className="bg-blue-100 h-48 rounded-lg mb-6 flex items-center justify-center">
+                                    <i className="fas fa-laptop-medical text-blue-600 text-6xl"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-3">Electronics Service Management System</h3>
+                                <p className="text-gray-700">Web-based app for complaint registration, repair tracking, and record maintenance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const CertificationsSection = () => (
+                <section id="certifications" className="section-padding">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Certifications</h2>
+                        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-white p-6 rounded-lg shadow-md card-hover">
+                                <div className="bg-blue-100 h-32 rounded-lg mb-4 flex items-center justify-center">
+                                    <i className="fas fa-certificate text-blue-600 text-5xl"></i>
+                                </div>
+                                <h3 className="font-semibold mb-2">Microsoft MTA: Database Fundamentals</h3>
+                                <p className="text-gray-600">2022</p>
+                            </div>
+                            <div className="bg-white p-6 rounded-lg shadow-md card-hover">
+                                <div className="bg-blue-100 h-32 rounded-lg mb-4 flex items-center justify-center">
+                                    <i className="fas fa-cloud text-blue-600 text-5xl"></i>
+                                </div>
+                                <h3 className="font-semibold mb-2">AWS Academy Cloud Foundations</h3>
+                                <p className="text-gray-600">2023</p>
+                            </div>
+                            <div className="bg-white p-6 rounded-lg shadow-md card-hover">
+                                <div className="bg-blue-100 h-32 rounded-lg mb-4 flex items-center justify-center">
+                                    <i className="fas fa-code text-blue-600 text-5xl"></i>
+                                </div>
+                                <h3 className="font-semibold mb-2">Full Stack Java Training</h3>
+                                <p className="text-gray-600">Digital Edify (6 months)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const ContactSection = () => (
+                <section id="contact" className="section-padding bg-gray-50">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold mb-8 text-center">Contact Me</h2>
+                        <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                            <div className="space-y-6">
+                                <div className="flex items-center">
+                                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                                        <i className="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">Location</h3>
+                                        <p className="text-gray-600">Parchur, India</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                                        <i className="fas fa-envelope text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">Email</h3>
+                                        <p className="text-gray-600">yavanikahoney6@gmail.com</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="bg-blue-100 p-3 rounded-full mr-4">
+                                        <i className="fab fa-linkedin text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">LinkedIn</h3>
+                                        <p className="text-gray-600">
+                                            <a href="#" className="text-blue-600 hover:underline">LinkedIn Profile</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+
+            const Footer = () => (
+                <footer className="bg-blue-600 text-white py-6">
+                    <div className="container mx-auto px-4 text-center">
+                        <p>&copy; {new Date().getFullYear()} Adapala Yavanika. All rights reserved.</p>
+                    </div>
+                </footer>
+            );
+
+            return (
+                <div>
+                    <Navbar />
+                    <HomeSection />
+                    <AboutSection />
+                    <EducationSection />
+                    <InternshipSection />
+                    <SkillsSection />
+                    <ProjectsSection />
+                    <CertificationsSection />
+                    <ContactSection />
+                    <Footer />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
